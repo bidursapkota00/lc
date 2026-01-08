@@ -10,6 +10,8 @@
   - [Contains Duplicate](#contains-duplicate)
 - [Two Pointers](#two-pointers)
   - [Valid Palindrome](#valid-palindrome)
+- [Sliding Window](#sliding-window)
+  - [Best Time to Buy and Sell Stock](#best-time-to-buy-and-sell-stock)
 
 ## Arrays & Hashing
 
@@ -148,6 +150,75 @@ function isAlphaNum(c: string): boolean {
   return (
     (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || (c >= "0" && c <= "9")
   );
+}
+```
+
+**Time & Space Complexity**
+
+- Time complexity: O(n)
+- Space complexity: O(1)
+
+## Sliding Window
+
+### Best Time to Buy and Sell Stock
+
+**Example 1:**
+
+```text
+Input: prices = [7,1,5,3,6,4]
+Output: 5
+Explanation: Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5.
+Note that buying on day 2 and selling on day 1 is not allowed because you must buy before you sell.
+```
+
+**Example 2:**
+
+```text
+Input: prices = [7,6,4,3,1]
+Output: 0
+Explanation: In this case, no transactions are done and the max profit = 0.
+```
+
+You should aim for a solution with O(n) time and O(1) space, where n is the size of the input array.
+
+**Solution**
+
+As we scan through the prices, we keep track of two things:
+
+    1.  The lowest price so far → this is the best day to buy.
+    2.  The best profit so far → selling today minus the lowest buy price seen earlier.
+
+At each price, we imagine selling on that day.
+The profit would be:
+`current price – lowest price seen so far`
+
+We then update:
+
+    - the maximum profit,
+    - and the lowest price if we find a cheaper one.
+
+This way, we make the optimal buy–sell decision in one simple pass.
+
+**Algorithm**
+
+1. Initialize:
+   - minBuy as the first price,
+   - maxP = 0 for the best profit.
+2. Loop through each price sell:
+   - Update maxP with sell - minBuy.
+   - Update minBuy if we find a smaller price.
+3. Return maxP after scanning all days.
+
+```ts
+function maxProfit(prices: number[]): number {
+  let maxProfit = 0;
+  let minBuy = prices[0];
+
+  for (let sell of prices) {
+    maxProfit = Math.max(maxProfit, sell - minBuy);
+    minBuy = Math.min(minBuy, sell);
+  }
+  return maxProfit;
 }
 ```
 
