@@ -12,6 +12,10 @@
   - [Valid Palindrome](#valid-palindrome)
 - [Sliding Window](#sliding-window)
   - [Best Time to Buy and Sell Stock](#best-time-to-buy-and-sell-stock)
+- [Stack](#stack)
+  - [Valid Parentheses](#valid-parentheses)
+- [Linked List](#linked-list)
+  - [Reverse Linked List](#reverse-linked-list)
 
 ## Arrays & Hashing
 
@@ -185,8 +189,8 @@ You should aim for a solution with O(n) time and O(1) space, where n is the size
 
 As we scan through the prices, we keep track of two things:
 
-    1.  The lowest price so far → this is the best day to buy.
-    2.  The best profit so far → selling today minus the lowest buy price seen earlier.
+1.  The lowest price so far → this is the best day to buy.
+2.  The best profit so far → selling today minus the lowest buy price seen earlier.
 
 At each price, we imagine selling on that day.
 The profit would be:
@@ -194,8 +198,8 @@ The profit would be:
 
 We then update:
 
-    - the maximum profit,
-    - and the lowest price if we find a cheaper one.
+- the maximum profit,
+- and the lowest price if we find a cheaper one.
 
 This way, we make the optimal buy–sell decision in one simple pass.
 
@@ -226,3 +230,170 @@ function maxProfit(prices: number[]): number {
 
 - Time complexity: O(n)
 - Space complexity: O(1)
+
+## Stack
+
+### Valid Parentheses
+
+Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+
+An input string is valid if:
+
+1. Open brackets must be closed by the same type of brackets.
+2. Open brackets must be closed in the correct order.
+3. Every close bracket has a corresponding open bracket of the same type.
+
+Return true if s is a valid string, and false otherwise.
+
+**Example 1:**
+
+```text
+Input: s = "()[]{}"
+Output: true
+```
+
+**Example 2:**
+
+```text
+Input: s = "([)]"
+Output: false
+```
+
+You should aim for a solution with O(n) time and O(n) space, where n is the length of the given string.
+
+**Solution**
+
+Valid parentheses must follow a last-opened, first-closed order — just like stacking plates.
+
+So we use a stack to track opening brackets.
+
+Whenever we see a closing bracket, we simply check whether it matches the most recent opening bracket on top of the stack.
+
+If it matches, we remove that opening bracket.
+
+If it doesn’t match (or the stack is empty), the string is invalid.
+
+A valid string ends with an empty stack.
+
+**Algorithm**
+
+1. Create a stack to store opening brackets.
+2. For each character in the string:
+   - If it is an opening bracket, push it onto the stack.
+   - If it is a closing bracket:
+     - Check if the stack is not empty and its top matches the corresponding opening bracket.
+     - If yes, pop the stack.
+     - Otherwise, return false.
+3. After processing all characters:
+   - If the stack is empty, return true.
+   - Otherwise, return false.
+
+```ts
+function isValid(s: string): boolean {
+  const stack: string[] = [];
+  const closeToOpen = {
+    ")": "(",
+    "}": "{",
+    "]": "[",
+  };
+
+  for (let c of s) {
+    if (closeToOpen[c]) {
+      if (stack.length > 0 && stack[stack.length - 1] === closeToOpen[c])
+        stack.pop();
+      else return false;
+    } else stack.push(c);
+  }
+  return stack.length === 0;
+}
+```
+
+**Time & Space Complexity**
+
+- Time complexity: O(n)
+- Space complexity: O(n)
+
+## Linked List
+
+### Reverse Linked List
+
+Given the head of a singly linked list, reverse the list, and return the reversed list.
+
+**Example 1:**
+
+```text
+Input: head = [1,2,3,4,5]
+Output: [5,4,3,2,1]
+```
+
+**Example 2:**
+
+```text
+Input: head = []
+Output: []
+```
+
+You should aim for a solution with O(n) time and O(1) space, where n is the length of the given list.
+
+Reversing a linked list iteratively is all about flipping pointers one step at a time.
+
+We walk through the list from left to right, and for each node, we redirect its next pointer to point to the node behind it.
+
+To avoid losing track of the rest of the list, we keep three pointers:
+
+- curr → the current node we are processing
+- prev → the node that should come after curr once reversed
+- temp → the original next node (so we don’t break the chain)
+
+By moving these pointers forward in each step, we gradually reverse the entire list.
+
+When curr becomes None, the list is fully reversed, and prev points to the new head.
+
+**Algorithm**
+
+1. Initialize:
+
+   - prev = None
+   - curr = head
+
+2. While curr exists:
+
+   - Save the next node: temp = curr.next
+   - Reverse the pointer: curr.next = prev
+   - Move prev to curr
+   - Move curr to temp
+
+3. When the loop ends, prev is the new head of the reversed list.
+4. Return prev.
+
+```ts
+/**
+ * Definition for singly-linked list.
+ * class ListNode {
+ *     val: number
+ *     next: ListNode | null
+ *     constructor(val?: number, next?: ListNode | null) {
+ *         this.val = (val===undefined ? 0 : val)
+ *         this.next = (next===undefined ? null : next)
+ *     }
+ * }
+ */
+
+function reverseList(head: ListNode | null): ListNode | null {
+  let prev = null,
+    curr = head,
+    temp = null;
+  while (curr) {
+    temp = curr.next;
+    curr.next = prev;
+    prev = curr;
+    curr = temp;
+  }
+  return prev;
+}
+```
+
+**Time & Space Complexity**
+
+Time complexity: O(n)
+Space complexity: O(1)
